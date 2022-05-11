@@ -1,0 +1,38 @@
+# -----------------------------------------------
+# {{ ansible_managed }}
+# -----------------------------------------------
+
+[Unit]
+Description=Tomcat Server
+After=network.target
+
+[Service]
+Type=simple
+
+Restart=always
+RestartSec=10s
+
+User={{ _tomcat.user }}
+Group={{ _tomcat.group }}
+
+# Set umask to disallow others to access logs, temp files etc.
+UMask=0027
+
+ExecStartPre=-/usr/local/sbin/tomcat-pre-start.sh
+ExecStart={{ _tomcat.install_dir }}/bin/catalina.sh run
+
+ExecStop={{ _tomcat.install_dir }}/bin/catalina.sh stop 60
+ExecStopPost=-/usr/local/sbin/tomcat-post-stop.sh
+
+# Grant ExecStop 60s + 10s tolerance
+TimeoutStopSec=70s
+
+# https://serverfault.com/questions/695849/services-remain-in-failed-state-after-stopped-with-systemctl/695863#695863
+#
+# Exit code 143 means that the program received a SIGTERM signal to instruct it to exit,
+# but it did not handle the signal properly. This is almost always due to programming errors,
+# and is pretty common with Java applications of all types.
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
