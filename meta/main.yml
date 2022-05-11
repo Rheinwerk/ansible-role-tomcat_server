@@ -1,0 +1,16 @@
+---
+allow_duplicates: yes
+galaxy_info:
+  role_name: tomcat_server
+  author: Michael Schmitz
+  description: Installs Tomcat
+  company: Rheinwerk
+  license: license (GPLv3)
+  min_ansible_version: 2.3
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+  galaxy_tags:
+    - tomcat
+dependencies: []
