@@ -9,7 +9,7 @@
   file: dest="{{ _tomcat.install_dir }}" state=directory owner=root group=root mode=0755
 
 - name: Download Tomcat
-  unarchive: src="{{ _tomcat.url }}" remote_src=yes dest="{{ _tomcat.install_dir }}" extra_opts="--strip=1" owner=root group=root
+  unarchive: src="{{ _tomcat.url }}" remote_src=yes dest="{{ _tomcat.install_dir }}" extra_opts="--strip=1" owner=root group=root mode=0755
 
 - name: Remove superfluous Tomcat files
   file: path="{{ _tomcat.install_dir }}/{{ item }}" state=absent
