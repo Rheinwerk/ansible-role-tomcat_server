@@ -1,12 +1,12 @@
 ---
 - name: Create Tomcat group
-  group:
+  ansible.builtin.group:
     name: "{{ _tomcat.group }}"
     state: present
     system: yes
 
 - name: Create Tomcat user
-  user:
+  ansible.builtin.user:
     name: "{{ _tomcat.user }}"
     group: "{{ _tomcat.group }}"
     groups: '{{ _tomcat.additional_groups | join(",") }}'
@@ -17,7 +17,7 @@
     home: '/tmp'
 
 - name: Create tomcat installation dir
-  file:
+  ansible.builtin.file:
     dest: "{{ _tomcat.install_dir }}"
     state: directory
     owner: root
@@ -25,7 +25,7 @@
     mode: 0755
 
 - name: Download Tomcat
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ _tomcat.url }}"
     remote_src: yes
     dest: "{{ _tomcat.install_dir }}"
@@ -35,7 +35,7 @@
     mode: 0755
 
 - name: Remove superfluous Tomcat files
-  file:
+  ansible.builtin.file:
     path: "{{ _tomcat.install_dir }}/{{ item }}"
     state: absent
   with_items:
@@ -43,7 +43,7 @@
     - "webapps/docs"
 
 - name: Set Tomcat directory permissions
-  file:
+  ansible.builtin.file:
     name: "{{ _tomcat.install_dir }}/{{ item.name }}"
     owner: "{{ item.owner | default(_tomcat.user) }}"
     group: "{{ item.group | default(_tomcat.group) }}"
@@ -60,7 +60,7 @@
     - { name: "bin", owner: "root", mode: "u=rwX,g=rX,o=rX", recurse: "yes" }
 
 - name: Set Tomcat script execute permissions
-  file:
+  ansible.builtin.file:
     name: "{{ _tomcat.install_dir }}/bin/{{ item }}"
     state: file
     mode: 0755
@@ -78,7 +78,7 @@
     - version.sh
 
 - name: Create Tomcat Catalina directories
-  file:
+  ansible.builtin.file:
     name: "{{ _tomcat.install_dir }}/conf/Catalina/localhost"
     state: directory
     owner: "{{ _tomcat.user }}"
@@ -86,7 +86,7 @@
     mode: 0750
 
 - name: Create tomcat systemd scripts
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/{{ item }}"
     mode: 0640

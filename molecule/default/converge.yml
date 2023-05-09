@@ -5,7 +5,7 @@
 
   pre_tasks:
     - name: update APT Cache
-      apt:
+      ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: 600
       register: result
@@ -17,7 +17,7 @@
   # skip idempotence tests
   tasks:
     - name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       tags:
         - molecule-idempotence-notest
