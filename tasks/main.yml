@@ -24,23 +24,18 @@
     group: root
     mode: 0755
 
-- name: Download Tomcat
+- name: Download Tomcat but skip superfluous files
   ansible.builtin.unarchive:
     src: "{{ _tomcat.url }}"
     remote_src: yes
     dest: "{{ _tomcat.install_dir }}"
     extra_opts: "--strip=1"
+    exclude:
+      - "webapps/examples"
+      - "webapps/docs"
     owner: root
     group: root
     mode: 0755
-
-- name: Remove superfluous Tomcat files
-  ansible.builtin.file:
-    path: "{{ _tomcat.install_dir }}/{{ item }}"
-    state: absent
-  with_items:
-    - "webapps/examples"
-    - "webapps/docs"
 
 - name: Set Tomcat directory permissions
   ansible.builtin.file:
