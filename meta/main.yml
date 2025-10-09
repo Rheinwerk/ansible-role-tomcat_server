@@ -1,8 +1,7 @@
 ---
 galaxy_info:
-  author: Michael Schmitz
+  author: rheinwerk
   description: Installs Tomcat
-  namespace: rheinwerk
   role_name: tomcat_server
   company: Rheinwerk
   license: license (GPLv3)
