@@ -24,11 +24,14 @@
     group: root
     mode: "0755"
 
+# Extract once: unarchive compares against the permissions set below, so it would extract again on
+# every run and reset them. A changed url therefore does not upgrade an existing installation.
 - name: Download Tomcat but skip superfluous files
   ansible.builtin.unarchive:
     src: "{{ _tomcat.url }}"
     remote_src: yes
     dest: "{{ _tomcat.install_dir }}"
+    creates: "{{ _tomcat.install_dir }}/bin/catalina.sh"
     extra_opts: "--strip=1"
     exclude:
       - "webapps/examples"
@@ -36,8 +39,10 @@
     owner: root
     group: root
     mode: "0755"
+  register: _tomcat_download
 
-- name: Set Tomcat directory permissions
+# Only after a fresh extract: the recursive conf entry would undo the owner of conf/Catalina/localhost
+- name: Set Tomcat directory permissions # noqa no-handler
   ansible.builtin.file:
     name: "{{ _tomcat.install_dir }}/{{ item.name }}"
     owner: "{{ item.owner | default(_tomcat.user) }}"
@@ -53,6 +58,7 @@
     - { name: "conf", owner: "root", mode: "u=rwX,g=rX,o=", recurse: "yes" }
     - { name: "lib", owner: "root", mode: "u=rwX,g=rX,o=rX", recurse: "yes" }
     - { name: "bin", owner: "root", mode: "u=rwX,g=rX,o=rX", recurse: "yes" }
+  when: _tomcat_download is changed
 
 - name: Set Tomcat script execute permissions
   ansible.builtin.file:
